@@ -1,0 +1,25 @@
+name: 构建docker镜像并推向阿里云
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 拉取代码
+      - uses: actions/checkout@v2
+
+      # 登录阿里云镜像仓库
+      - name: Docker Login
+        run: |
+          docker login registry.cn-hangzhou.aliyuncs.com \
+            -u ${{ secrets.ALIYUN_REGISTRY_USER }} \
+            -p ${{ secrets.ALIYUN_REGISTRY_PASSWORD }}
+
+      # 构建并推送镜像
+      - name: Build and Push Docker Image
+        run: |
+          docker build -t registry.cn-hangzhou.aliyuncs.com/readest-test/readest:latest .
+          docker push registry.cn-hangzhou.aliyuncs.com/readest-test/readest:latest
